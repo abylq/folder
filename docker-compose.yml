@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  server:
+    image: folder
+    container_name: "folder"
+    build: ./
+    command: ./app
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongodb
+  mongodb:
+    image: 'mongo:4.2.6-bionic'
+    container_name: mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./mongodata:/data/db
+    restart: always
+  mongo_express:
+    image: mongo-express
+    container_name: mongo_express
+    depends_on:
+      - 'mongodb'
+    ports:
+      - '8081:8081'
+    restart: always
