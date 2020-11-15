@@ -18,7 +18,7 @@ type FolderRepository struct {
 }
 
 func NewFolderRepository(db *mongo.Database, collection string) *FolderRepository {
-	return &FolderRepository{
+	return &FolderRepository {
 		db: db.Collection(collection),
 	}
 }

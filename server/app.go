@@ -19,20 +19,20 @@ import (
 	authhttp "github.com/abylq/folder/auth/delivery/http"
 	authmongo "github.com/abylq/folder/auth/repository/mongo"
 	authusecase "github.com/abylq/folder/auth/usecase"
-	authfolder "github.com/abylq/folder/folder/delivery/http"
 	bmhttp "github.com/abylq/folder/bookmark/delivery/http"
 	bmmongo "github.com/abylq/folder/bookmark/repository/mongo"
-	fmongo "github.com/abylq/folder/folder/repository/mongo"
 	bmusecase "github.com/abylq/folder/bookmark/usecase"
+	fmhttp "github.com/abylq/folder/folder/delivery/http"
+	fmmongo "github.com/abylq/folder/folder/repository/mongo"
 	fmusecase "github.com/abylq/folder/folder/usecase"
 )
 
 type App struct {
 	httpServer *http.Server
-
 	bookmarkUC bookmark.UseCase
 	authUC     auth.UseCase
 	folderUC   folder.UseCase
+
 }
 
 func NewApp() *App {
@@ -40,8 +40,7 @@ func NewApp() *App {
 
 	userRepo := authmongo.NewUserRepository(db, viper.GetString("mongo.user_collection"))
 	bookmarkRepo := bmmongo.NewBookmarkRepository(db, viper.GetString("mongo.bookmark_collection"))
-	folderRepo := fmongo.NewFolderRepository(db,viper.GetString("mongo.folder_collection"))
-
+	folderRepo := fmmongo.NewFolderRepository(db,viper.GetString("mongo.folder_collection"))
 	return &App{
 		bookmarkUC: bmusecase.NewBookmarkUseCase(bookmarkRepo),
 		authUC: authusecase.NewAuthUseCase(
@@ -71,8 +70,7 @@ func (a *App) Run(port string) error {
 	api := router.Group("/api", authMiddleware)
 
 	bmhttp.RegisterHTTPEndpoints(api, a.bookmarkUC)
-
-	authfolder.RegisterHTTPEndpoints(api,a.folderUC)
+	fmhttp.RegisterHTTPEndpoints(api, a.folderUC)
 
 	// HTTP Server
 	a.httpServer = &http.Server{

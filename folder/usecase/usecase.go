@@ -16,7 +16,7 @@ func NewFolderUseCase(folderRepo folder.Repository) *FolderUseCase {
 	}
 }
 
-func (f FolderUseCase) CreateFolder(ctx context.Context, user *models.User, url, title string) error {
+func (f FolderUseCase) CreateFolder(ctx context.Context, user *models.User, title string) error {
 	fm := &models.Folder{
 		Title: title,
 	}
