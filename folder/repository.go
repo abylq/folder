@@ -7,4 +7,5 @@ import (
 
 type Repository interface {
 	CreateFolder(ctx context.Context, user *models.User, bm *models.Folder) error
+	GetFolders(ctx context.Context, user *models.User) ([]*models.Folder, error)
 }

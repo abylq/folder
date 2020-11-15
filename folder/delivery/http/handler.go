@@ -27,6 +27,10 @@ type createInput struct {
 	Title string `json:"title"`
 }
 
+type getResponse struct {
+	Folders []*Folder `json:"folders"`
+}
+
 func (h *Handler) Create(c *gin.Context) {
 	input := new(createInput)
 	if err := c.BindJSON(input); err != nil {
@@ -42,4 +46,18 @@ func (h *Handler) Create(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
+}
+
+func (h *Handler) Get(c *gin.Context) {
+	user := c.MustGet(auth.CtxUserKey).(*models.User)
+
+	bms, err := h.useCase.GetFolders(c.Request.Context(), user)
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, &getResponse{
+		Folders: toFolders(bms),
+	})
 }
